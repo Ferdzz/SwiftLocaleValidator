@@ -4,18 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,7 +20,7 @@ public class SwiftLocaleValidator {
             SUBSTRING_START_OPTION_KEY = "substring";
 
     public static void main(String[] args) {
-        CommandLineParser parser = new DefaultParser();
+        CommandLineParser parser = new GnuParser();
         Options options = new Options();
 
         Option projectFolderOption = new Option(DIRECTORY_OPTION_KEY, true, "the project directory to parse");
@@ -75,7 +68,6 @@ public class SwiftLocaleValidator {
         }
     }
 
-
     private final HashMap<String, String> localeMap;
     private final HashSet<String> codeStrings;
 
@@ -89,7 +81,7 @@ public class SwiftLocaleValidator {
         this.readLocaleFile(localeFile);
         this.readAllFiles(projectFile, substring);
         this.validateStrings();
-        System.out.println("\nDone parsing the project!");
+        System.out.println("Done parsing the project!");
     }
 
     private void readLocaleFile(File localeFile) throws IOException {
@@ -111,7 +103,7 @@ public class SwiftLocaleValidator {
     }
 
     private void readAllFiles(File projectFile, String[] substring) throws IOException {
-        System.out.println(" --- Parsing for NSLocalizedString reference --- ");
+        System.out.println(" --- Parsing code for Localized String references --- ");
 
         Collection<File> files = FileUtils.listFiles(projectFile, new String[] {"swift"}, true);
         for (File file : files) {
@@ -128,7 +120,7 @@ public class SwiftLocaleValidator {
             br.close();
         }
 
-        System.out.println(" --- Done parsing for NSLocalizedString reference --- \n");
+        System.out.println(" --- Done parsing code for Localized String references --- \n");
     }
 
     private void validateStrings() {
@@ -136,13 +128,13 @@ public class SwiftLocaleValidator {
 
         for (String string : this.localeMap.keySet()) {
             if (!this.codeStrings.contains(string)) {
-                System.err.println("'" + string + "' was defined in the locale but not used in code! ");
+                System.out.println("'" + string + "' was defined in the locale but not used in code! ");
             }
         }
         System.out.println("------");
         for (String string : codeStrings) {
             if (!this.localeMap.containsKey(string)) {
-                System.err.println("'" + string + "' was used in the code but never defined in the locale! ");
+                System.out.println("'" + string + "' was used in the code but never defined in the locale! ");
             }
         }
 
