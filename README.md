@@ -27,6 +27,7 @@ java -jar SwiftLocaleValidator.jar -directory "path/to the project/directory" -l
 Parsing the project...
 
  --- Starting parsing locale file --- 
+'Label.DuplicatedKey' key was defined multiple times
  --- Done parsing locale file --- 
 
  --- Parsing code for Localized String references --- 
